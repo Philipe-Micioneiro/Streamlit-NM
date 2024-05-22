@@ -23,11 +23,6 @@ def enviar_email(df):
 
     pythoncom.CoInitialize()
 
-
-
-# Função para enviar e-mails
-def enviar_email(df):
-    pythoncom.CoInitialize()
     try:
         infos = {}
         for indice, linhas in df.iterrows():
