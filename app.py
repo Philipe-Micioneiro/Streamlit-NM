@@ -7,14 +7,15 @@ st.subheader("Coloque a planilha desejada, no formato definido:")
 
 st.title('RPA: Proposta de acordos')
 
-
 # Verifica se o sistema operacional é Windows
-try:
-    import win32com.client as win32
-    import pythoncom
-    is_windows = True
-except ImportError:
-    is_windows = False
+is_windows = platform.system() == "Windows"
+
+if is_windows:
+    try:
+        import win32com.client as win32
+        import pythoncom
+    except ImportError:
+        is_windows = False
 
 def enviar_email(df):
     if not is_windows:
