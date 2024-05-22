@@ -1,7 +1,20 @@
-import streamlit as st
-import win32com.client as win32
-import pythoncom
 import pandas as pd
+import streamlit as st
+
+# Verifica se o sistema operacional é Windows
+try:
+    import win32com.client as win32
+    import pythoncom
+    is_windows = True
+except ImportError:
+    is_windows = False
+
+def enviar_email(df):
+    if not is_windows:
+        st.error("Este recurso só está disponível no Windows.")
+        return
+
+    pythoncom.CoInitialize()
 
 st.set_page_config(page_title="RPA: Proposta de acordos")
 
