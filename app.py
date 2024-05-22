@@ -1,34 +1,26 @@
 import streamlit as st
 import pandas as pd
-import platform
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 st.set_page_config(page_title="RPA: Proposta de acordos")
 
 st.title('RPA: Proposta de acordos')
 st.subheader("Coloque a planilha desejada, no formato definido:")
 
-# Verifica se o sistema operacional é Windows e tenta importar as bibliotecas
-try:
-    if platform.system() == "Windows":
-        import win32com.client as win32
-        import pythoncom
-        is_windows = True
-    else:
-        is_windows = False
-except ImportError:
-    st.error('Erro ao importar win32com.client e pythoncom. Certifique-se de que as bibliotecas estão instaladas corretamente.')
-    is_windows = False
-
 def enviar_email(df):
-    if not is_windows:
-        st.warning('O envio de emails só é suportado no Windows.')
-        import win32com.client as win32
-        import pythoncom
-        return
-
-    pythoncom.CoInitialize()
+    smtp_server = "smtp.office365.com"  # Servidor SMTP do Outlook
+    smtp_port = 587  # Porta padrão para TLS
+    smtp_user = "pm@nantesmello.com"  # Seu endereço de email do Outlook
+    smtp_password = "Sodexo31"  # Sua senha de email
 
     try:
+        # Conexão ao servidor SMTP
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(smtp_user, smtp_password)
+
         infos = {}
         for indice, linhas in df.iterrows():
             dicionario_linhas = linhas.to_dict()
@@ -47,14 +39,14 @@ def enviar_email(df):
             confirmacao = '1'
             if confirmacao == '1':
                 try:
-                    # Instanciando o Outlook
-                    outlook = win32.Dispatch('outlook.application')
-                    email = outlook.CreateItem(0)
                     # Configurando as informações do email
-                    email.To = destinatario
-                    email.Subject = f'{estado} - PROPOSTA DE ACORDO – {cnj} – {parte_contraria}'
-                    # HTMLBody com a assinatura integrada
-                    email.HTMLBody = f"""
+                    msg = MIMEMultipart()
+                    msg['From'] = smtp_user
+                    msg['To'] = destinatario
+                    msg['Subject'] = f'{estado} - PROPOSTA DE ACORDO – {cnj} – {parte_contraria}'
+
+                    # Corpo do email
+                    html = f"""
                     <html>
                     <body>
                         <p>Prezado(a) {nome},</p>
@@ -84,7 +76,10 @@ def enviar_email(df):
                     </body>
                     </html>
                     """
-                    email.Send()
+                    msg.attach(MIMEText(html, 'html'))
+
+                    # Envio do email
+                    server.sendmail(smtp_user, destinatario, msg.as_string())
                     st.success(f'Email enviado com sucesso para {destinatario}.')
                 except Exception as e:
                     st.error(f'Erro ao enviar email para {destinatario}: {e}')
@@ -92,11 +87,11 @@ def enviar_email(df):
             else:
                 st.warning('Por favor, verifique os destinatários')
 
+        server.quit()
+
     except Exception as e:
         st.error(f'Erro na preparação do envio dos emails: {e}')
         st.write(f'Detalhes do erro: {str(e)}')
-    finally:
-        pythoncom.CoUninitialize()
 
 # Upload do arquivo
 df_file = st.file_uploader('Arraste aqui o relatório de acordo!', type=['csv', 'xlsx'])
