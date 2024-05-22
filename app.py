@@ -15,32 +15,32 @@ if is_windows:
         import win32com.client as win32
         import pythoncom
     except ImportError:
+        st.error('Erro ao importar win32com.client e pythoncom. Certifique-se de que as bibliotecas estão instaladas.')
         is_windows = False
 
 def enviar_email(df):
     if is_windows:
         pythoncom.CoInitialize()
 
-    try:
-        infos = {}
-        for indice, linhas in df.iterrows():
-            dicionario_linhas = linhas.to_dict()
-            infos[indice] = dicionario_linhas
+        try:
+            infos = {}
+            for indice, linhas in df.iterrows():
+                dicionario_linhas = linhas.to_dict()
+                infos[indice] = dicionario_linhas
 
-        i = 0
-        for dicts in infos:
-            destinatario = infos[i]['Destinatário']
-            nome = infos[i]['Parte Contrária'].upper()
-            cnj = infos[i]['Número do Processo'].upper()
-            estado = infos[i]['Estado'].upper()
-            parte_contraria = infos[i]['Parte Contrária'].upper()
-            proposta = infos[i]['Proposta']
+            i = 0
+            for dicts in infos:
+                destinatario = infos[i]['Destinatário']
+                nome = infos[i]['Parte Contrária'].upper()
+                cnj = infos[i]['Número do Processo'].upper()
+                estado = infos[i]['Estado'].upper()
+                parte_contraria = infos[i]['Parte Contrária'].upper()
+                proposta = infos[i]['Proposta']
 
-            i += 1
-            confirmacao = '1'
-            if confirmacao == '1':
-                try:
-                    if is_windows:
+                i += 1
+                confirmacao = '1'
+                if confirmacao == '1':
+                    try:
                         # Instanciando o Outlook
                         outlook = win32.Dispatch('outlook.application')
                         email = outlook.CreateItem(0)
@@ -80,20 +80,19 @@ def enviar_email(df):
                         """
                         email.Send()
                         st.success(f'Email enviado com sucesso para {destinatario}.')
-                    else:
-                        st.write(f'Email enviado com sucesso para {destinatario}. (Simulação)')
-                except Exception as e:
-                    st.error(f'Erro ao enviar email para {destinatario}: {e}')
-                    st.write(f'Detalhes do erro: {str(e)}')
-            else:
-                st.warning('Por favor, verifique os destinatários')
+                    except Exception as e:
+                        st.error(f'Erro ao enviar email para {destinatario}: {e}')
+                        st.write(f'Detalhes do erro: {str(e)}')
+                else:
+                    st.warning('Por favor, verifique os destinatários')
 
-    except Exception as e:
-        st.error(f'Erro na preparação do envio dos emails: {e}')
-        st.write(f'Detalhes do erro: {str(e)}')
-    finally:
-        if is_windows:
+        except Exception as e:
+            st.error(f'Erro na preparação do envio dos emails: {e}')
+            st.write(f'Detalhes do erro: {str(e)}')
+        finally:
             pythoncom.CoUninitialize()
+    else:
+        st.warning('O envio de emails só é suportado no Windows.')
 
 # Upload do arquivo
 df_file = st.file_uploader('Arraste aqui o relatório de acordo!', type=['csv', 'xlsx'])
