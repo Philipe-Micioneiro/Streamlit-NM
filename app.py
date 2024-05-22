@@ -7,6 +7,7 @@ st.set_page_config(page_title="RPA: Proposta de acordos")
 st.subheader("Coloque a planilha desejada, no formato definido:")
 
 st.title('RPA: Proposta de acordos')
+
 # Verifica se o sistema operacional é Windows
 is_windows = platform.system() == "Windows"
 
@@ -126,7 +127,7 @@ df = st.file_uploader('Arraste aqui o relatório de acordo!', type=['csv', 'xlsx
 if df is not None:
     df = pd.read_excel(df)
     st.dataframe(df.head(10))
-    if st.button('Rodar'):
+    if st.button('Enviar'):
         enviar_email(df)
 else:
     st.write('Sem arquivo!')
