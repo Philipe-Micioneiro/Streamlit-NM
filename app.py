@@ -84,11 +84,13 @@ def enviar_email(df):
                         st.write(f'Email enviado com sucesso para {destinatario}. (Simulação)')
                 except Exception as e:
                     st.error(f'Erro ao enviar email para {destinatario}: {e}')
+                    st.write(f'Detalhes do erro: {str(e)}')
             else:
                 st.warning('Por favor, verifique os destinatários')
 
     except Exception as e:
         st.error(f'Erro na preparação do envio dos emails: {e}')
+        st.write(f'Detalhes do erro: {str(e)}')
     finally:
         if is_windows:
             pythoncom.CoUninitialize()
