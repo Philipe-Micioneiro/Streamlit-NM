@@ -1,12 +1,11 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import platform
 
 st.set_page_config(page_title="RPA: Proposta de acordos")
 
-st.subheader("Coloque a planilha desejada, no formato definido:")
-
 st.title('RPA: Proposta de acordos')
+st.subheader("Coloque a planilha desejada, no formato definido:")
 
 # Verifica se o sistema operacional é Windows
 is_windows = platform.system() == "Windows"
