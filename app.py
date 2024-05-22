@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import platform
 
 st.set_page_config(page_title="RPA: Proposta de acordos")
 
