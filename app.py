@@ -10,12 +10,13 @@ st.subheader("Coloque a planilha desejada, no formato definido:")
 # Verifica se o sistema operacional é Windows
 is_windows = platform.system() == "Windows"
 
+# Importar win32com e pythoncom somente se o sistema operacional for Windows
 if is_windows:
     try:
         import win32com.client as win32
         import pythoncom
     except ImportError:
-        st.error('Erro ao importar win32com.client e pythoncom. Certifique-se de que as bibliotecas estão instaladas.')
+        st.error('Erro ao importar win32com.client e pythoncom. Certifique-se de que as bibliotecas estão instaladas corretamente.')
         is_windows = False
 
 def enviar_email(df):
@@ -41,45 +42,48 @@ def enviar_email(df):
                 confirmacao = '1'
                 if confirmacao == '1':
                     try:
-                        # Instanciando o Outlook
-                        outlook = win32.Dispatch('outlook.application')
-                        email = outlook.CreateItem(0)
-                        # Configurando as informações do email
-                        email.To = destinatario
-                        email.Subject = f'{estado} - PROPOSTA DE ACORDO – {cnj} – {parte_contraria}'
-                        # HTMLBody com a assinatura integrada
-                        email.HTMLBody = f"""
-                        <html>
-                        <body>
-                            <p>Prezado(a) {nome},</p>
-                            <p>Segue a proposta de acordo para o processo {cnj}.</p>
-                            <p>Atenciosamente,</p>
-                            <p>{parte_contraria}</p>
-                            <table width="520" border="0">
-                                <tr>
-                                    <td width="480" align="center">
-                                        <a href="https://www.nantesmello.com/" target="_blank">
-                                            <img src="https://colosseo.com.br/email/nantes/logo.png" alt="Logo NM" width="137" height="94">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <table border="0">
-                                            <tr>
-                                                <td>
-                                                    <a href="mailto:pm@nantesmello.com">
-                                                        <img src="https://colosseo.com.br/email/nantes/davidson-galdino-infos.jpg" alt="David Galdino">
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </body>
-                        </html>
-                        """
-                        email.Send()
-                        st.success(f'Email enviado com sucesso para {destinatario}.')
+                        if is_windows:
+                            # Instanciando o Outlook
+                            outlook = win32.Dispatch('outlook.application')
+                            email = outlook.CreateItem(0)
+                            # Configurando as informações do email
+                            email.To = destinatario
+                            email.Subject = f'{estado} - PROPOSTA DE ACORDO – {cnj} – {parte_contraria}'
+                            # HTMLBody com a assinatura integrada
+                            email.HTMLBody = f"""
+                            <html>
+                            <body>
+                                <p>Prezado(a) {nome},</p>
+                                <p>Segue a proposta de acordo para o processo {cnj}.</p>
+                                <p>Atenciosamente,</p>
+                                <p>{parte_contraria}</p>
+                                <table width="520" border="0">
+                                    <tr>
+                                        <td width="480" align="center">
+                                            <a href="https://www.nantesmello.com/" target="_blank">
+                                                <img src="https://colosseo.com.br/email/nantes/logo.png" alt="Logo NM" width="137" height="94">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <table border="0">
+                                                <tr>
+                                                    <td>
+                                                        <a href="mailto:pm@nantesmello.com">
+                                                            <img src="https://colosseo.com.br/email/nantes/davidson-galdino-infos.jpg" alt="David Galdino">
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </body>
+                            </html>
+                            """
+                            email.Send()
+                            st.success(f'Email enviado com sucesso para {destinatario}.')
+                        else:
+                            st.write(f'Email enviado com sucesso para {destinatario}. (Simulação)')
                     except Exception as e:
                         st.error(f'Erro ao enviar email para {destinatario}: {e}')
                         st.write(f'Detalhes do erro: {str(e)}')
