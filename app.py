@@ -22,6 +22,8 @@ except ImportError:
 def enviar_email(df):
     if not is_windows:
         st.warning('O envio de emails só é suportado no Windows.')
+        import win32com.client as win32
+        import pythoncom
         return
 
     pythoncom.CoInitialize()
