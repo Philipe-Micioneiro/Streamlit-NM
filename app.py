@@ -1,6 +1,13 @@
 import pandas as pd
 import streamlit as st
 
+st.set_page_config(page_title="RPA: Proposta de acordos")
+
+st.subheader("Coloque a planilha desejada, no formato definido:")
+
+st.title('RPA: Proposta de acordos')
+
+
 # Verifica se o sistema operacional é Windows
 try:
     import win32com.client as win32
@@ -16,11 +23,7 @@ def enviar_email(df):
 
     pythoncom.CoInitialize()
 
-st.set_page_config(page_title="RPA: Proposta de acordos")
 
-st.subheader("Coloque a planilha desejada, no formato definido:")
-
-st.title('RPA: Proposta de acordos')
 
 # Função para enviar e-mails
 def enviar_email(df):
