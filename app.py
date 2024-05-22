@@ -7,7 +7,6 @@ st.subheader("Coloque a planilha desejada, no formato definido:")
 
 st.title('RPA: Proposta de acordos')
 
-# Verifica se o sistema operacional é Windows
 is_windows = platform.system() == "Windows"
 
 if is_windows:
